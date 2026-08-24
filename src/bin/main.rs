@@ -8,7 +8,6 @@
 #![deny(clippy::large_stack_frames)]
 
 use embassy_executor::Spawner;
-use embassy_time::{Duration, Timer};
 use esp_hal::clock::CpuClock;
 use esp_hal::timer::timg::TimerGroup;
 use log::{error, info};
@@ -31,32 +30,10 @@ esp_bootloader_esp_idf::esp_app_desc!();
 )]
 #[esp_rtos::main]
 async fn main(spawner: Spawner) -> ! {
-    // generator version: 1.3.0
-    // generator parameters: --chip esp32s3 -o esp32s3-wroom-1-octal-psram -o unstable-hal -o alloc -o wifi -o embassy -o log -o wokwi -o vscode -o esp
-
     esp_println::logger::init_logger_from_env();
 
     let config = esp_hal::Config::default().with_cpu_clock(CpuClock::max());
     let peripherals = esp_hal::init(config);
-
-    // The following pins are used to bootstrap the chip. They are available
-    // for use, but check the datasheet of the module for more information on them.
-    // - GPIO0
-    // - GPIO3
-    // - GPIO45
-    // - GPIO46
-    // These GPIO pins are in use by some feature of the module and should not be used.
-    let _ = peripherals.GPIO27;
-    let _ = peripherals.GPIO28;
-    let _ = peripherals.GPIO29;
-    let _ = peripherals.GPIO30;
-    let _ = peripherals.GPIO31;
-    let _ = peripherals.GPIO32;
-    let _ = peripherals.GPIO33;
-    let _ = peripherals.GPIO34;
-    let _ = peripherals.GPIO35;
-    let _ = peripherals.GPIO36;
-    let _ = peripherals.GPIO37;
 
     esp_alloc::heap_allocator!(#[esp_hal::ram(reclaimed)] size: 73744);
 
@@ -67,17 +44,8 @@ async fn main(spawner: Spawner) -> ! {
 
     info!("Embassy initialized!");
 
-    let (mut _wifi_controller, _interfaces) =
-        esp_radio::wifi::new(peripherals.WIFI, Default::default())
-            .expect("Failed to initialize Wi-Fi controller");
-
-    // TODO: Spawn some tasks
     let _ = spawner;
 
-    loop {
-        info!("Hello world!");
-        Timer::after(Duration::from_secs(1)).await;
-    }
-
-    // for inspiration have a look at the examples at https://github.com/esp-rs/esp-hal/tree/esp-hal-v1.1.0/examples
+    // Phase 1 starts here.
+    loop {}
 }
